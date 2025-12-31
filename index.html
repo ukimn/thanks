@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Surprise For You</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Dancing+Script:wght@700&family=Quicksand:wght@400&display=swap" rel="stylesheet">
+    <style>
+        /* General Styles */
+        * {
+            box-sizing: border-box; /* This ensures padding doesn't break the layout */
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Quicksand', 'Cairo', sans-serif; /* Added Cairo for Arabic */
+        }
+
+        /* Animated Background */
+        body {
+            background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fad0c4, #ffdde1);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Container styling */
+        .container {
+            background: rgba(255, 255, 255, 0.90); /* Slightly more opaque for readability */
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 90%; /* Occupy 90% of screen width on mobile */
+            z-index: 10;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: #d63384;
+            font-size: 3em;
+            margin-bottom: 20px;
+            margin-top: 0;
+            line-height: 1.2;
+        }
+
+        p {
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        /* Login Input Styles */
+        input[type="password"] {
+            padding: 15px;
+            border-radius: 30px;
+            border: 2px solid #ff9a9e;
+            width: 100%; /* Full width relative to container */
+            max-width: 300px;
+            outline: none;
+            font-size: 1rem;
+            text-align: center;
+            transition: 0.3s;
+            margin-bottom: 10px;
+        }
+
+        input[type="password"]:focus {
+            border-color: #d63384;
+            box-shadow: 0 0 10px rgba(214, 51, 132, 0.2);
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 12px 30px;
+            background-color: #d63384;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: transform 0.2s, background 0.3s;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        button:hover {
+            background-color: #c21b6c;
+            transform: scale(1.05);
+        }
+
+        /* The Hidden Message Section */
+        #surprise {
+            display: none;
+            opacity: 0;
+            transition: opacity 2s ease-in;
+        }
+
+        .heart-icon {
+            font-size: 4em;
+            color: #ff4757;
+            animation: beat 1s infinite;
+            margin-bottom: 10px;
+        }
+
+        @keyframes beat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Floating Hearts Animation Background */
+        .floating-heart {
+            position: absolute;
+            color: #fff;
+            bottom: -50px;
+            font-size: 24px;
+            animation: floatUp 6s linear infinite;
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        .error-msg {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 15px;
+            display: none;
+        }
+
+        /* --- RESPONSIVE TWEAKS FOR MOBILE --- */
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 20px; /* Less padding on small screens */
+            }
+            
+            h1 {
+                font-size: 2.2em; /* Smaller title to fit screen */
+            }
+            
+            p {
+                font-size: 1em; /* Readable text size */
+            }
+
+            .heart-icon {
+                font-size: 3em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container" id="login-screen">
+        <h1>Hello Love</h1>
+        <p>هديه بسيطة للحب❤️</p>
+        <input type="password" id="password" placeholder="Type password here..." onkeyup="handleEnter(event)">
+        <br>
+        <button onclick="checkPassword()">Unlock My Heart</button>
+        <div id="error" class="error-msg">Wrong password! Hint: It's your nickname.</div>
+    </div>
+
+    <div class="container" id="surprise">
+        <div class="heart-icon">❤️</div>
+        <h1>I Love You!</h1>
+        <p dir="rtl">
+            ربنا ميحرمنيش منك ابدا يا حبيبتي شكرا على كل حاجه بتعمليها معايا بجد اغلى حد في حياتي فعلا عوضي عن كل حاجه بجد
+            <br><br>
+            ❤️❤️❤️ انا بحبك جدا
+        </p>
+    </div>
+
+    <script>
+        function checkPassword() {
+            const input = document.getElementById("password").value;
+            const errorMsg = document.getElementById("error");
+            
+            // Password check (Case insensitive)
+            if (input.toLowerCase() === "nody") {
+                // Hide login, show surprise
+                document.getElementById("login-screen").style.display = "none";
+                const surprise = document.getElementById("surprise");
+                surprise.style.display = "block";
+                
+                // Allow a tiny delay for the display change before fading in
+                setTimeout(() => {
+                    surprise.style.opacity = "1";
+                }, 50);
+
+                // Start the falling hearts animation
+                createHearts();
+            } else {
+                errorMsg.style.display = "block";
+                // Shake animation for wrong password
+                const container = document.getElementById("login-screen");
+                container.style.transform = "translateX(10px)";
+                setTimeout(() => { container.style.transform = "translateX(-10px)"; }, 100);
+                setTimeout(() => { container.style.transform = "translateX(0px)"; }, 200);
+            }
+        }
+
+        // Allow pressing "Enter" key to submit
+        function handleEnter(event) {
+            if (event.key === "Enter") {
+                checkPassword();
+            }
+        }
+
+        // Function to create floating background hearts
+        function createHearts() {
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.classList.add('floating-heart');
+                heart.innerHTML = '❤';
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.animationDuration = Math.random() * 3 + 3 + "s"; // Random speed
+                heart.style.fontSize = Math.random() * 20 + 20 + "px"; // Random size
+                
+                document.body.appendChild(heart);
+
+                // Remove heart after animation to keep browser clean
+                setTimeout(() => {
+                    heart.remove();
+                }, 6000);
+            }, 300); // Create a new heart every 300ms
+        }
+    </script>
+</body>
+</html>
